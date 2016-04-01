@@ -86,19 +86,19 @@ module RTanque
     end
 
     def on_top_wall?
-      self.y >= self.arena.height
+      self.y >= top_wall
     end
 
     def on_bottom_wall?
-      self.y <= 0
+      self.y <= bottom_wall
     end
 
     def on_left_wall?
-      self.x <= 0
+      self.x <= left_wall
     end
 
     def on_right_wall?
-      self.x >= self.arena.width
+      self.x >= right_wall
     end
 
     def on_wall?
@@ -109,6 +109,26 @@ module RTanque
       self.y > self.arena.height || self.y < 0 || self.x > self.arena.width || self.x < 0
     end
 
+    def left_wall
+      bounds_offset
+    end
+
+    def right_wall
+      self.arena.width - bounds_offset
+    end
+
+    def top_wall
+      self.arena.height - bounds_offset
+    end
+
+    def bottom_wall
+      bounds_offset
+    end
+
+    def bounds_offset
+      30
+    end
+
     def move(heading, speed, bound_to_arena = true)
       # round to avoid floating point errors
       x = (self.x + (Math.sin(heading) * speed)).round(10)
@@ -117,15 +137,15 @@ module RTanque
     end
 
     def bind_to_arena
-      if self.x < 0
-        self.x = 0.0
-      elsif self.x > self.arena.width
-        self.x = self.arena.width.to_f
+      if on_left_wall?
+        self.x = left_wall
+      elsif on_right_wall?
+        self.x = right_wall
       end
-      if self.y < 0
-        self.y = 0.0
-      elsif self.y > self.arena.height
-        self.y = self.arena.height.to_f
+      if self.y < bottom_wall
+        self.y = bottom_wall
+      elsif self.y > top_wall
+        self.y = top_wall
       end
     end
 
